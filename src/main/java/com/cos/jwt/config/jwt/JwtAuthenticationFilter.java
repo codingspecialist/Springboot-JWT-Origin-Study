@@ -64,12 +64,11 @@ public class JwtAuthenticationFilter implements Filter{
 					String jwtToken = 
 							JWT.create()
 							.withSubject("토큰제목")
-							.withExpiresAt(new Date(System.currentTimeMillis()+1000*60*30))
+							.withExpiresAt(new Date(System.currentTimeMillis()+1000*60*60))
 							.withClaim("id", personEntity.getId())
-							.withClaim("username", personEntity.getUsername())
-							.sign(Algorithm.HMAC512("비밀키"));
+							.sign(Algorithm.HMAC512(JwtProps.secret));
 					
-					resp.addHeader("Authorization", "Bearer "+jwtToken);
+					resp.addHeader(JwtProps.header, JwtProps.auth+jwtToken);
 					out.print("ok");
 					out.flush();
 				}

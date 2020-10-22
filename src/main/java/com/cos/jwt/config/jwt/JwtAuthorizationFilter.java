@@ -33,17 +33,17 @@ public class JwtAuthorizationFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 		
-		String jwtToken = req.getHeader("Authorization");
+		String jwtToken = req.getHeader(JwtProps.header);
 
 		if (jwtToken == null) {
 			PrintWriter out = resp.getWriter();
 			out.print("jwtToken not found");
 			out.flush();
 		} else {
-			jwtToken = jwtToken.replace("Bearer ", "");
+			jwtToken = jwtToken.replace(JwtProps.auth, "");
 
 			try {
-				int personId = JWT.require(Algorithm.HMAC512("비밀키")).build().verify(jwtToken).getClaim("id").asInt();
+				int personId = JWT.require(Algorithm.HMAC512(JwtProps.secret)).build().verify(jwtToken).getClaim("id").asInt();
 				HttpSession session = req.getSession();
 				Person personEntity = personRepository.findById(personId).get();
 				session.setAttribute("principal", personEntity);
